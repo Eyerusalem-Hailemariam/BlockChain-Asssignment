@@ -25,5 +25,3 @@ BlockChain-Assignment/
 
 ## Course Link
 [Alchemy Learn Solidity](https://university.alchemy.com/)
-
----

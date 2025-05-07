@@ -5,28 +5,27 @@ contract Voting {
     struct Proposal {
         address target;
         bytes data;
-        uint yesCount;
-        uint noCount;
+        uint256 yesCount;
+        uint256 noCount;
         bool executed;
         mapping(address => bool) hasVoted;
         mapping(address => bool) voteDirection;
     }
 
     Proposal[] public proposals;
-    mapping(address => bool) public members;
-    address[] public memberList;
 
-    event ProposalCreated(uint proposalId);
-    event VoteCast(uint proposalId, address voter);
-    event ProposalExecuted(uint proposalId);
+    mapping(address => bool) public members;
+
+    // Events
+    event ProposalCreated(uint256 proposalId);
+    event VoteCast(uint256 proposalId, address voter);
+    event ProposalExecuted(uint256 proposalId);
 
     constructor(address[] memory _members) {
+        members[msg.sender] = true; // Deployer is a member
         for (uint i = 0; i < _members.length; i++) {
             members[_members[i]] = true;
-            memberList.push(_members[i]);
         }
-        members[msg.sender] = true;
-        memberList.push(msg.sender);
     }
 
     modifier onlyMember() {
@@ -34,39 +33,31 @@ contract Voting {
         _;
     }
 
-    function getProposal(uint proposalId) external view returns (
-        address target,
-        bytes memory data,
-        uint yesCount,
-        uint noCount,
-        bool executed
-    ) {
-        Proposal storage proposal = proposals[proposalId];
-        return (proposal.target, proposal.data, proposal.yesCount, proposal.noCount, proposal.executed);
-    }
-
     function newProposal(address _target, bytes calldata _data) external onlyMember {
-        Proposal storage newProp = proposals.push();
-        newProp.target = _target;
-        newProp.data = _data;
-        newProp.yesCount = 0;
-        newProp.noCount = 0;
-        newProp.executed = false;
-        emit ProposalCreated(proposals.length - 1);
+        proposals.push();
+        uint256 id = proposals.length - 1;
+        Proposal storage p = proposals[id];
+        p.target = _target;
+        p.data = _data;
+
+        emit ProposalCreated(id);
     }
 
-    function castVote(uint proposalId, bool supportsProposal) external onlyMember {
-        require(proposalId < proposals.length, "Invalid proposalId");
+    function castVote(uint256 proposalId, bool supportsProposal) external onlyMember {
+        require(proposalId < proposals.length, "Invalid proposal ID");
         Proposal storage proposal = proposals[proposalId];
         require(!proposal.executed, "Proposal already executed");
 
         if (proposal.hasVoted[msg.sender]) {
-            if (proposal.voteDirection[msg.sender] && !supportsProposal) {
-                proposal.yesCount--;
-                proposal.noCount++;
-            } else if (!proposal.voteDirection[msg.sender] && supportsProposal) {
-                proposal.noCount--;
-                proposal.yesCount++;
+            bool previousSupport = proposal.voteDirection[msg.sender];
+            if (previousSupport != supportsProposal) {
+                if (previousSupport) {
+                    proposal.yesCount--;
+                    proposal.noCount++;
+                } else {
+                    proposal.noCount--;
+                    proposal.yesCount++;
+                }
             }
         } else {
             if (supportsProposal) {
@@ -76,15 +67,17 @@ contract Voting {
             }
             proposal.hasVoted[msg.sender] = true;
         }
+
         proposal.voteDirection[msg.sender] = supportsProposal;
+
         emit VoteCast(proposalId, msg.sender);
 
-        if (proposal.yesCount >= 10) {
+        // Execute proposal if it has 10 yes votes and hasn't already been executed
+        if (!proposal.executed && proposal.yesCount >= 10) {
             proposal.executed = true;
             (bool success, ) = proposal.target.call(proposal.data);
-            require(success, "Proposal execution failed");
+            require(success, "Execution failed");
             emit ProposalExecuted(proposalId);
         }
     }
 }
-

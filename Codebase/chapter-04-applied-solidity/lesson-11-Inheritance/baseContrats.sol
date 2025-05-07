@@ -2,33 +2,23 @@
 pragma solidity 0.8.20;
 
 contract Ownable {
-    address private _owner;
+    address public owner;
 
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
-
+    // Constructor to set the deployer as the owner
     constructor() {
-        _owner = msg.sender;
-        emit OwnershipTransferred(address(0), _owner);
+        owner = msg.sender;
     }
 
+    // Modifier to restrict access to only the owner
     modifier onlyOwner() {
-        require(_owner == msg.sender, "Ownable: caller is not the owner");
+        require(msg.sender == owner, "Ownable: caller is not the owner");
         _;
-    }
-
-    function owner() public view returns (address) {
-        return _owner;
-    }
-
-    function transferOwnership(address newOwner) public onlyOwner {
-        require(newOwner != address(0), "Ownable: new owner is the zero address");
-        emit OwnershipTransferred(_owner, newOwner);
-        _owner = newOwner;
     }
 }
 
 contract Transferable is Ownable {
-    function transfer(address newOwner) public onlyOwner {
-        transferOwnership(newOwner);
+    // Function to transfer ownership
+    function transfer(address newOwner) external onlyOwner {
+        owner = newOwner;
     }
 }

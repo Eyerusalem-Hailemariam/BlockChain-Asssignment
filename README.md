@@ -15,9 +15,9 @@ This repository contains Solidity-based smart contract assignments organized by 
 
 ```
 BlockChain-Assignment/
-├── Notes/                     # Concepts and explanations from each module
+├── Notes/                     # Concepts and explanations from each lesson
 ├── Codebase/                  # Smart contracts written during exercises
-├── Screenshots/               # Progress proof per module
+├── Screenshots/               # Progress proof per excercise
 └── README.md                  # Overview of the repository
 ```
 

@@ -1,0 +1,65 @@
+## Lesson 11: Inheritance
+
+### Key Concepts
+- **Inheritance**: Solidity allows contracts to inherit from other contracts, enabling code reuse and modularity.
+- **Modifiers and Access Control**: Using `onlyOwner` to restrict access to specific functions.
+
+### Features Implemented
+1. **Ownable Contract**:
+   - Provides ownership functionality.
+   - Includes an `onlyOwner` modifier to restrict access to the owner.
+
+2. **Transferable Contract**:
+   - Inherits from `Ownable`.
+   - Adds functionality to transfer ownership to a new address.
+
+3. **Hero and Enemy Contracts**:
+   - Demonstrates inheritance with specialized contracts (`Mage` and `Warrior`) extending a base `Hero` contract.
+   - Each specialized contract overrides the `attack` function to implement unique behavior.
+
+### Code Highlights
+- **Ownable Contract**:
+   ```solidity
+   contract Ownable {
+       address public owner;
+
+       constructor() {
+           owner = msg.sender;
+       }
+
+       modifier onlyOwner() {
+           require(msg.sender == owner, "Ownable: caller is not the owner");
+           _;
+       }
+   }
+   ```
+
+- **Transferable Contract**:
+   ```solidity
+   contract Transferable is Ownable {
+       function transfer(address newOwner) external onlyOwner {
+           owner = newOwner;
+       }
+   }
+   ```
+
+- **Mage and Warrior Contracts**:
+   ```solidity
+   contract Mage is Hero {
+       constructor() Hero(50) {}
+
+       function attack(Enemy enemy) public override {
+           super.attack(enemy);
+           enemy.takeAttack(AttackTypes.Spell);
+       }
+   }
+
+   contract Warrior is Hero {
+       constructor() Hero(200) {}
+
+       function attack(Enemy enemy) public override {
+           super.attack(enemy);
+           enemy.takeAttack(AttackTypes.Brawl);
+       }
+   }
+   ```

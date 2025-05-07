@@ -27,9 +27,3 @@ BlockChain-Assignment/
 [Alchemy Learn Solidity](https://university.alchemy.com/)
 
 ---
-
-## How to Use This Repo
-1. **Browse `Notes/`**: For detailed explanations of Solidity concepts.
-2. **Explore `Codebase/`**: To see smart contract implementations for each lesson.
-3. **Check `Screenshots/`**: To track our progress through the course.
-4. **Refer to `Resources/`**: For additional learning materials.

@@ -34,6 +34,17 @@ contract Voting {
         _;
     }
 
+    function getProposal(uint proposalId) external view returns (
+        address target,
+        bytes memory data,
+        uint yesCount,
+        uint noCount,
+        bool executed
+    ) {
+        Proposal storage proposal = proposals[proposalId];
+        return (proposal.target, proposal.data, proposal.yesCount, proposal.noCount, proposal.executed);
+    }
+
     function newProposal(address _target, bytes calldata _data) external onlyMember {
         Proposal storage newProp = proposals.push();
         newProp.target = _target;

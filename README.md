@@ -7,7 +7,7 @@ This repository contains Solidity-based smart contract assignments organized by 
 - **Bernabas Tesfaye**          (id: UGR/22610/13)
 - **Eyerusalem Hailemariam**    (id: UGR/22598/13)
 - **Naod Alemu**                (id: UGR/22812/13)
-- **Eba**                       (id: -/-/-)
+- **Ebisa Bette**               (id: UGR/22643/13)
 
 ---
 
